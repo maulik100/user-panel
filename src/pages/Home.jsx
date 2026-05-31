@@ -45,10 +45,33 @@ export default function Home() {
               </div>
               {streamUrl ? (
                 <div className="video-section">
-                  <video src={streamUrl} controls playsInline autoPlay muted />
+                  <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: 10, overflow: 'hidden' }}>
+                    <iframe
+                      src={streamUrl}
+                      title="Live Darshan"
+                      frameBorder="0"
+                      allow="autoplay; encrypted-media"
+                      allowFullScreen
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                    />
+                  </div>
                 </div>
               ) : (
-                <div className="video-placeholder">🙏 Live darshan will be available during aarti timings</div>
+                <div style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  padding: '40px 20px', background: 'linear-gradient(135deg, #fff8f0, #fff3e0)',
+                  borderRadius: 12, border: '2px dashed #e8a87c', textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: 52, marginBottom: 12 }}>🙏</div>
+                  <h3 style={{ color: '#800000', margin: '0 0 8px', fontSize: 20 }}>Live Darshan — Coming Soon</h3>
+                  <p style={{ color: '#888', fontSize: 14, margin: '0 0 16px', maxWidth: 340, lineHeight: 1.6 }}>
+                    Live darshan streaming will be available soon. Please visit during aarti timings or check back later.
+                  </p>
+                  <span style={{
+                    background: '#800000', color: '#fff', padding: '6px 18px',
+                    borderRadius: 20, fontSize: 13, fontWeight: 600
+                  }}>🔔 Stay Tuned</span>
+                </div>
               )}
             </div>
 
