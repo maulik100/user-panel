@@ -57,6 +57,8 @@ export const publicApi = {
   getInstagramReels: (page = 0, size = 10) => api.get(`/instagram/reels?page=${page}&size=${size}`),
   getInstagramImages: (page = 0, size = 20) => api.get(`/instagram/images?page=${page}&size=${size}`),
   getInstagramMedia: (page = 0, size = 20) => api.get(`/instagram/media?page=${page}&size=${size}`),
+  getActiveSponsors: () => api.get('/sponsors/active'),
+  recordSponsorClick: (id) => api.post(`/sponsors/${id}/click`),
 };
 
 export default api;
