@@ -16,7 +16,15 @@ export default function Home() {
       publicApi.getLiveStream().then(r => setStreamUrl(r.data.url)),
       publicApi.getEvents().then(r => setEvents([...(r.data.today || []), ...(r.data.upcoming || [])].slice(0, 6))),
       publicApi.getNews().then(r => setNews(r.data.slice(0, 5))),
-      publicApi.getActiveSponsors().then(r => setSponsors(r.data.data || [])).catch(() => {}),
+      publicApi.getActiveSponsors().then(r => {
+        const base = (import.meta.env.VITE_API_BASE || 'http://localhost:8080/api').replace('/api', '');
+        const list = (r.data.data || []).map(s => ({
+          ...s,
+          mediaUrl: s.mediaUrl ? base + s.mediaUrl : null,
+          thumbnailUrl: s.thumbnailUrl ? base + s.thumbnailUrl : null,
+        }));
+        setSponsors(list);
+      }).catch(() => {}),
     ]).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
@@ -105,19 +113,17 @@ export default function Home() {
                   onClick={() => openSponsorModal(sponsors[sponsorIdx])}>
                   {sponsors[sponsorIdx].mediaType === 'IMAGE' ? (
                     <img
-                      src={sponsors[sponsorIdx].mediaPreviewUrl}
+                      src={sponsors[sponsorIdx].mediaUrl}
                       alt={sponsors[sponsorIdx].title}
                       style={{ width: '100%', maxHeight: 200, objectFit: 'cover', borderRadius: 12, display: 'block' }}
                       onError={e => { e.target.style.display = 'none'; }}
                     />
                   ) : (
                     <div style={{ position: 'relative', paddingBottom: '40%', height: 0, borderRadius: 12, overflow: 'hidden', pointerEvents: 'none' }}>
-                      <iframe
-                        src={sponsors[sponsorIdx].mediaPreviewUrl}
-                        title={sponsors[sponsorIdx].title}
-                        frameBorder="0"
-                        allow="autoplay; encrypted-media"
-                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                      <video
+                        src={sponsors[sponsorIdx].mediaUrl}
+                        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                        autoPlay muted loop
                       />
                     </div>
                   )}
@@ -251,14 +257,11 @@ export default function Home() {
                 style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888' }}>✕</button>
             </div>
             {sponsorModal.mediaType === 'IMAGE' ? (
-              <img src={sponsorModal.mediaPreviewUrl} alt={sponsorModal.title}
+              <img src={sponsorModal.mediaUrl} alt={sponsorModal.title}
                 style={{ width: '100%', borderRadius: 10, maxHeight: 300, objectFit: 'contain', background: '#f5f5f5' }} />
             ) : (
-              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: 10, overflow: 'hidden' }}>
-                <iframe src={sponsorModal.mediaPreviewUrl} title={sponsorModal.title}
-                  frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
-              </div>
+              <video src={sponsorModal.mediaUrl} controls
+                style={{ width: '100%', borderRadius: 10, maxHeight: 300 }} />
             )}
             {sponsorModal.description && (
               <p style={{ marginTop: 14, color: '#555', fontSize: 14, lineHeight: 1.6 }}>{sponsorModal.description}</p>
